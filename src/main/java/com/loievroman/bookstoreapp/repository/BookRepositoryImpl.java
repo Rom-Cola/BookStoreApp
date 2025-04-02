@@ -1,5 +1,6 @@
 package com.loievroman.bookstoreapp.repository;
 
+import com.loievroman.bookstoreapp.exception.DataProcessingException;
 import com.loievroman.bookstoreapp.model.Book;
 import java.util.List;
 import org.hibernate.Session;
@@ -31,7 +32,7 @@ public class BookRepositoryImpl implements BookRepository {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Can't save book to DB: " + book
+            throw new DataProcessingException("Can't save book to DB: " + book
                     + " " + e.getMessage());
         } finally {
             if (session != null) {
@@ -47,7 +48,7 @@ public class BookRepositoryImpl implements BookRepository {
             session = sessionFactory.openSession();
             return session.createQuery("From Book", Book.class).list();
         } catch (Exception e) {
-            throw new RuntimeException("Can't get all books from DB: " + e.getMessage());
+            throw new DataProcessingException("Can't get all books from DB: " + e.getMessage());
         } finally {
             if (session != null) {
                 session.close();
