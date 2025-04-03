@@ -3,6 +3,7 @@ package com.loievroman.bookstoreapp.repository;
 import com.loievroman.bookstoreapp.exception.DataProcessingException;
 import com.loievroman.bookstoreapp.model.Book;
 import java.util.List;
+import java.util.Optional;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -47,6 +48,17 @@ public class BookRepositoryImpl implements BookRepository {
             return session.createQuery("From Book", Book.class).list();
         } catch (Exception e) {
             throw new DataProcessingException("Can't get all books from DB: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public Optional<Book> findById(Long id) {
+        try (Session session = sessionFactory.openSession()) {
+            Book book = session.find(Book.class, id);
+            return Optional.ofNullable(book);
+        } catch (Exception e) {
+            throw new DataProcessingException("Can't get book with id="
+                    + id + " from DB: " + e.getMessage());
         }
     }
 }
