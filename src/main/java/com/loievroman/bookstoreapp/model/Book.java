@@ -40,5 +40,4 @@ public class Book {
 
     @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT")
     private boolean isDeleted = false;
-
 }
