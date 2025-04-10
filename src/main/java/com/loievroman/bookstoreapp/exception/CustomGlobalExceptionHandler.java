@@ -31,6 +31,16 @@ public class CustomGlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleEntityNotFoundExceptions(
+            EntityNotFoundException ex
+    ) {
+        return new ResponseEntity<>(
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
     private String getErrorMessage(ObjectError objectError) {
         if (objectError instanceof FieldError fieldError) {
             return fieldError.getField()
