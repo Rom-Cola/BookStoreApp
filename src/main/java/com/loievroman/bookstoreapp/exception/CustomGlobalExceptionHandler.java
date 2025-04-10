@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -21,11 +20,10 @@ public class CustomGlobalExceptionHandler {
             MethodArgumentNotValidException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST);
         List<String> errors = ex.getBindingResult()
                 .getAllErrors().stream()
                 .map(this::getErrorMessage)
-                .collect(Collectors.toList());
+                .toList();
         body.put("errors", errors);
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
@@ -47,6 +45,6 @@ public class CustomGlobalExceptionHandler {
                     + " "
                     + fieldError.getDefaultMessage();
         }
-        return null;
+        return objectError.getDefaultMessage();
     }
 }
