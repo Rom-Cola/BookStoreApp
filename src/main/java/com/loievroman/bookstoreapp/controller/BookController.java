@@ -3,6 +3,7 @@ package com.loievroman.bookstoreapp.controller;
 import com.loievroman.bookstoreapp.dto.BookDto;
 import com.loievroman.bookstoreapp.dto.CreateBookRequestDto;
 import com.loievroman.bookstoreapp.service.BookService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,12 +35,13 @@ public class BookController {
     }
 
     @PostMapping
-    public BookDto save(@RequestBody CreateBookRequestDto requestDto) {
+    public BookDto save(@RequestBody @Valid CreateBookRequestDto requestDto) {
         return bookService.save(requestDto);
     }
 
     @PutMapping("/{id}")
-    public BookDto update(@RequestBody CreateBookRequestDto requestDto, @PathVariable Long id) {
+    public BookDto update(@RequestBody @Valid CreateBookRequestDto requestDto,
+                          @PathVariable Long id) {
         return bookService.update(id, requestDto);
     }
 

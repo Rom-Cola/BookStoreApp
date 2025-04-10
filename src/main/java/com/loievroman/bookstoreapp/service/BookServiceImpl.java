@@ -2,10 +2,10 @@ package com.loievroman.bookstoreapp.service;
 
 import com.loievroman.bookstoreapp.dto.BookDto;
 import com.loievroman.bookstoreapp.dto.CreateBookRequestDto;
+import com.loievroman.bookstoreapp.exception.EntityNotFoundException;
 import com.loievroman.bookstoreapp.mapper.BookMapper;
 import com.loievroman.bookstoreapp.model.Book;
 import com.loievroman.bookstoreapp.repository.BookRepository;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
