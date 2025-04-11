@@ -6,9 +6,10 @@ import com.loievroman.bookstoreapp.exception.EntityNotFoundException;
 import com.loievroman.bookstoreapp.mapper.BookMapper;
 import com.loievroman.bookstoreapp.model.Book;
 import com.loievroman.bookstoreapp.repository.BookRepository;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,11 +25,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> findAll() {
-        return bookRepository.findAll()
-                .stream()
-                .map(bookMapper::toDto)
-                .toList();
+    public Page<BookDto> findAll(Pageable pageable) {
+        return bookRepository.findAll(pageable)
+                .map(bookMapper::toDto);
     }
 
     @Override
