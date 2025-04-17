@@ -1,7 +1,7 @@
 package com.loievroman.bookstoreapp.service;
 
-import com.loievroman.bookstoreapp.dto.BookDto;
-import com.loievroman.bookstoreapp.dto.CreateBookRequestDto;
+import com.loievroman.bookstoreapp.dto.book.BookDto;
+import com.loievroman.bookstoreapp.dto.book.CreateBookRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -1,7 +1,7 @@
 package com.loievroman.bookstoreapp.controller;
 
-import com.loievroman.bookstoreapp.dto.BookDto;
-import com.loievroman.bookstoreapp.dto.CreateBookRequestDto;
+import com.loievroman.bookstoreapp.dto.book.BookDto;
+import com.loievroman.bookstoreapp.dto.book.CreateBookRequestDto;
 import com.loievroman.bookstoreapp.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,7 +44,7 @@ public class BookController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Book found."),
-            @ApiResponse(responseCode = "404", description = "Book not found.")
+            @ApiResponse(responseCode = "404", description = "Book not found."),
     })
     @GetMapping("/{id}")
     public BookDto findById(@PathVariable Long id) {
@@ -67,7 +67,7 @@ public class BookController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Book updated successfully."),
-            @ApiResponse(responseCode = "404", description = "Book not found.")
+            @ApiResponse(responseCode = "404", description = "Book not found."),
     })
     @PutMapping("/{id}")
     public BookDto update(@RequestBody @Valid CreateBookRequestDto requestDto,

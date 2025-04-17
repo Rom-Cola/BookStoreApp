@@ -29,6 +29,16 @@ public class CustomGlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RegistrationException.class)
+    public ResponseEntity<String> handleEntityNotFoundExceptions(
+            RegistrationException ex
+    ) {
+        return new ResponseEntity<>(
+                ex.getMessage(),
+                HttpStatus.CONFLICT
+        );
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> handleEntityNotFoundExceptions(
             EntityNotFoundException ex
