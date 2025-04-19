@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: assign-user-role-to-all
+      author: loievroman
+      changes:
+        - sql:
+            splitStatements: false
+            sql: |
+              INSERT INTO users_roles (user_id, role_id)
+              SELECT id, 1 FROM users;
