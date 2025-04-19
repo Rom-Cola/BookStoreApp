@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ public class BookController {
             description = "Returns a paginated list of all available books."
     )
     @ApiResponse(responseCode = "200", description = "Books retrieved successfully.")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping
     public Page<BookDto> findAll(Pageable pageable) {
         return bookService.findAll(pageable);
@@ -46,6 +48,7 @@ public class BookController {
             @ApiResponse(responseCode = "200", description = "Book found."),
             @ApiResponse(responseCode = "404", description = "Book not found."),
     })
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{id}")
     public BookDto findById(@PathVariable Long id) {
         return bookService.findById(id);
@@ -56,6 +59,7 @@ public class BookController {
             description = "Saves a new book using the provided request body."
     )
     @ApiResponse(responseCode = "201", description = "Book created successfully.")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public BookDto save(@RequestBody @Valid CreateBookRequestDto requestDto) {
         return bookService.save(requestDto);
@@ -69,6 +73,7 @@ public class BookController {
             @ApiResponse(responseCode = "200", description = "Book updated successfully."),
             @ApiResponse(responseCode = "404", description = "Book not found."),
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public BookDto update(@RequestBody @Valid CreateBookRequestDto requestDto,
                           @PathVariable Long id) {
@@ -81,6 +86,7 @@ public class BookController {
     )
     @ApiResponse(responseCode = "204", description = "Book deleted successfully.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         bookService.delete(id);

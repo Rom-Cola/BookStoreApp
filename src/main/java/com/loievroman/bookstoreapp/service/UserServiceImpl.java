@@ -4,9 +4,12 @@ import com.loievroman.bookstoreapp.dto.user.UserRegistrationRequestDto;
 import com.loievroman.bookstoreapp.dto.user.UserResponseDto;
 import com.loievroman.bookstoreapp.exception.RegistrationException;
 import com.loievroman.bookstoreapp.mapper.UserMapper;
+import com.loievroman.bookstoreapp.model.Role;
 import com.loievroman.bookstoreapp.model.User;
+import com.loievroman.bookstoreapp.repository.RoleRepository;
 import com.loievroman.bookstoreapp.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +17,8 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private UserMapper userMapper;
+    private final RoleRepository roleRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
@@ -25,7 +30,15 @@ public class UserServiceImpl implements UserService {
             );
         }
         User user = userMapper.toModel(requestDto);
-        userRepository.save(user);
-        return userMapper.toUserResponse(user);
+        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+
+        Role userRole = roleRepository.findByRole(Role.RoleName.USER)
+                .orElseThrow(() -> new RegistrationException(
+                        "Default role USER not found in the database"));
+
+        user.getRoles().add(userRole);
+
+        User savedUser = userRepository.save(user);
+        return userMapper.toUserResponse(savedUser);
     }
 }

@@ -1,5 +1,6 @@
 package com.loievroman.bookstoreapp.dto.book;
 
+import com.loievroman.bookstoreapp.validation.uniqueisbn.UniqueIsbn;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -20,6 +21,7 @@ public class CreateBookRequestDto {
 
     @Pattern(regexp = "^(97(8|9))?\\d{9}(\\d|X)$", message = "Invalid ISBN format")
     @NotBlank
+    @UniqueIsbn
     private String isbn;
 
     @NotNull
