@@ -2,12 +2,14 @@ package com.loievroman.bookstoreapp.service;
 
 import com.loievroman.bookstoreapp.dto.user.UserRegistrationRequestDto;
 import com.loievroman.bookstoreapp.dto.user.UserResponseDto;
+import com.loievroman.bookstoreapp.exception.EntityNotFoundException;
 import com.loievroman.bookstoreapp.exception.RegistrationException;
 import com.loievroman.bookstoreapp.mapper.UserMapper;
 import com.loievroman.bookstoreapp.model.Role;
 import com.loievroman.bookstoreapp.model.User;
 import com.loievroman.bookstoreapp.repository.RoleRepository;
 import com.loievroman.bookstoreapp.repository.UserRepository;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,12 +35,12 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
 
         Role userRole = roleRepository.findByRole(Role.RoleName.USER)
-                .orElseThrow(() -> new RegistrationException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "Default role USER not found in the database"));
 
-        user.getRoles().add(userRole);
+        user.setRoles(Set.of(userRole));
 
-        User savedUser = userRepository.save(user);
-        return userMapper.toUserResponse(savedUser);
+        userRepository.save(user);
+        return userMapper.toUserResponse(user);
     }
 }

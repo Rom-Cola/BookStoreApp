@@ -15,4 +15,6 @@ public interface BookService {
     BookDto update(Long id, CreateBookRequestDto requestDto);
 
     void delete(Long id);
+
+    boolean existsByIsbn(String isbn);
 }

@@ -56,4 +56,9 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
+    @Override
+    public boolean existsByIsbn(String isbn) {
+        return bookRepository.existsByIsbn(isbn);
+    }
+
 }
