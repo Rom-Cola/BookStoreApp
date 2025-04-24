@@ -9,6 +9,7 @@ import com.loievroman.bookstoreapp.model.Role;
 import com.loievroman.bookstoreapp.model.User;
 import com.loievroman.bookstoreapp.repository.RoleRepository;
 import com.loievroman.bookstoreapp.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
             throws RegistrationException {
         if (userRepository.findByEmail(requestDto.getEmail()).isPresent()) {
@@ -36,7 +38,9 @@ public class UserServiceImpl implements UserService {
 
         Role userRole = roleRepository.findByRole(Role.RoleName.USER)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Default role USER not found in the database"));
+                        "Default role "
+                                + Role.RoleName.USER.name()
+                                + "not found in the database"));
 
         user.setRoles(Set.of(userRole));
 
