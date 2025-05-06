@@ -1,8 +1,11 @@
 package com.loievroman.bookstoreapp.controller;
 
+import com.loievroman.bookstoreapp.dto.user.UserLoginRequestDto;
+import com.loievroman.bookstoreapp.dto.user.UserLoginResponseDto;
 import com.loievroman.bookstoreapp.dto.user.UserRegistrationRequestDto;
 import com.loievroman.bookstoreapp.dto.user.UserResponseDto;
 import com.loievroman.bookstoreapp.exception.RegistrationException;
+import com.loievroman.bookstoreapp.security.AuthenticationService;
 import com.loievroman.bookstoreapp.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @Operation(
             summary = "Register a new user",
@@ -34,5 +38,10 @@ public class AuthenticationController {
     public UserResponseDto register(@RequestBody @Valid UserRegistrationRequestDto request)
             throws RegistrationException {
         return userService.register(request);
+    }
+
+    @PostMapping("/login")
+    public UserLoginResponseDto login(@RequestBody UserLoginRequestDto userLoginRequestDto) {
+        return authenticationService.authenticate(userLoginRequestDto);
     }
 }
