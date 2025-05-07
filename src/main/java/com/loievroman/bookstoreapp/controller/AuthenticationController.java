@@ -8,6 +8,8 @@ import com.loievroman.bookstoreapp.exception.RegistrationException;
 import com.loievroman.bookstoreapp.security.AuthenticationService;
 import com.loievroman.bookstoreapp.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -40,8 +42,20 @@ public class AuthenticationController {
         return userService.register(request);
     }
 
+    @Operation(
+            summary = "Authenticate user and return JWT token",
+            description = "This endpoint allows to authenticate a "
+                    + "user and obtain a JWT token for subsequent API calls."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully authenticated",
+                    content = @Content(
+                            schema = @Schema(implementation = UserLoginResponseDto.class)
+                    )),
+            @ApiResponse(responseCode = "400", description = "Invalid username or password")
+    })
     @PostMapping("/login")
-    public UserLoginResponseDto login(@RequestBody UserLoginRequestDto userLoginRequestDto) {
+    public UserLoginResponseDto login(@RequestBody @Valid UserLoginRequestDto userLoginRequestDto) {
         return authenticationService.authenticate(userLoginRequestDto);
     }
 }

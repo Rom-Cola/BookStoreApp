@@ -12,23 +12,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateBookRequestDto {
-
     @NotBlank
     private String title;
-
     @NotBlank
     private String author;
-
     @Pattern(regexp = "^(97(8|9))?\\d{9}(\\d|X)$", message = "Invalid ISBN format")
     @NotBlank
     @UniqueIsbn
     private String isbn;
-
     @NotNull
     @Positive
     private BigDecimal price;
-
     private String description;
-
     private String coverImage;
 }

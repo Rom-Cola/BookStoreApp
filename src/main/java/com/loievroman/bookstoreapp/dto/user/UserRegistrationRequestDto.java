@@ -9,22 +9,16 @@ import lombok.Setter;
 @Setter
 @FieldMatch(first = "password", second = "repeatPassword", message = "Passwords do not match")
 public class UserRegistrationRequestDto {
-
     @NotBlank
     private String email;
-
     @NotBlank
     private String password;
-
     @NotBlank
     private String repeatPassword;
-
     @NotBlank
     private String firstName;
-
     @NotBlank
     private String lastName;
-
     @NotBlank
     private String shippingAddress;
 
