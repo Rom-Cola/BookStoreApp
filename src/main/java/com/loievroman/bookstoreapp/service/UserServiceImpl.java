@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
                             .formatted(requestDto.getEmail())
             );
         }
-        User user = userMapper.toModel(requestDto);
+        User user = userMapper.toEntity(requestDto);
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
 
         Role userRole = roleRepository.findByRole(Role.RoleName.USER)

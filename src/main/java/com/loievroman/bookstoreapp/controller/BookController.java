@@ -1,6 +1,7 @@
 package com.loievroman.bookstoreapp.controller;
 
 import com.loievroman.bookstoreapp.dto.book.BookDto;
+import com.loievroman.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import com.loievroman.bookstoreapp.dto.book.CreateBookRequestDto;
 import com.loievroman.bookstoreapp.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,7 +51,7 @@ public class BookController {
     })
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{id}")
-    public BookDto findById(@PathVariable Long id) {
+    public BookDtoWithoutCategoryIds findById(@PathVariable Long id) {
         return bookService.findById(id);
     }
 
