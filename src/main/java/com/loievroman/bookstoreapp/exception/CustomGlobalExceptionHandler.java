@@ -1,5 +1,6 @@
 package com.loievroman.bookstoreapp.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,6 +47,16 @@ public class CustomGlobalExceptionHandler {
         return new ResponseEntity<>(
                 ex.getMessage(),
                 HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<String> expiredJwtExceptions(
+            ExpiredJwtException ex
+    ) {
+        return new ResponseEntity<>(
+                ex.getMessage(),
+                HttpStatus.UNAUTHORIZED
         );
     }
 

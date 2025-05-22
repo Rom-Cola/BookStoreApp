@@ -1,11 +1,13 @@
 package com.loievroman.bookstoreapp.service;
 
 import com.loievroman.bookstoreapp.dto.book.BookDto;
+import com.loievroman.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import com.loievroman.bookstoreapp.dto.book.CreateBookRequestDto;
 import com.loievroman.bookstoreapp.exception.EntityNotFoundException;
 import com.loievroman.bookstoreapp.mapper.BookMapper;
 import com.loievroman.bookstoreapp.model.Book;
 import com.loievroman.bookstoreapp.repository.BookRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +22,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto save(CreateBookRequestDto requestDto) {
-        Book book = bookMapper.toModel(requestDto);
+        Book book = bookMapper.toEntity(requestDto);
         return bookMapper.toDto(bookRepository.save(book));
     }
 
@@ -31,12 +33,20 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto findById(Long id) {
+    public List<BookDto> getBooksByCategoryId(Long categoryId) {
+        return bookRepository.findAllByCategoriesId(categoryId)
+                .stream()
+                .map(bookMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public BookDtoWithoutCategoryIds findById(Long id) {
         Optional<Book> bookOptional = bookRepository.findById(id);
         Book book = bookOptional.orElseThrow(
                 () -> new EntityNotFoundException("Can't find book by id=" + id)
         );
-        return bookMapper.toDto(book);
+        return bookMapper.toDtoWithoutCategories(book);
     }
 
     @Override
@@ -46,7 +56,7 @@ public class BookServiceImpl implements BookService {
                         () -> new EntityNotFoundException("Can't get a book by id: "
                                 + id + " to update.")
                 );
-        Book updatedBook = bookMapper.updateModel(requestDto, foundBook);
+        Book updatedBook = bookMapper.updateEntity(requestDto, foundBook);
         bookRepository.save(updatedBook);
         return bookMapper.toDto(updatedBook);
     }
