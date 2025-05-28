@@ -1,7 +1,6 @@
 package com.loievroman.bookstoreapp.service;
 
 import com.loievroman.bookstoreapp.dto.book.BookDto;
-import com.loievroman.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import com.loievroman.bookstoreapp.dto.book.CreateBookRequestDto;
 import com.loievroman.bookstoreapp.exception.EntityNotFoundException;
 import com.loievroman.bookstoreapp.mapper.BookMapper;
@@ -41,12 +40,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDtoWithoutCategoryIds findById(Long id) {
+    public BookDto findById(Long id) {
         Optional<Book> bookOptional = bookRepository.findById(id);
         Book book = bookOptional.orElseThrow(
                 () -> new EntityNotFoundException("Can't find book by id=" + id)
         );
-        return bookMapper.toDtoWithoutCategories(book);
+        return bookMapper.toDto(book);
     }
 
     @Override

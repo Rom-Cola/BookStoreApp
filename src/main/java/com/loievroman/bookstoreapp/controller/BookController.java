@@ -1,7 +1,6 @@
 package com.loievroman.bookstoreapp.controller;
 
 import com.loievroman.bookstoreapp.dto.book.BookDto;
-import com.loievroman.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import com.loievroman.bookstoreapp.dto.book.CreateBookRequestDto;
 import com.loievroman.bookstoreapp.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/books")
+@RequestMapping("/books")
 public class BookController {
 
     private final BookService bookService;
@@ -51,7 +50,7 @@ public class BookController {
     })
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{id}")
-    public BookDtoWithoutCategoryIds findById(@PathVariable Long id) {
+    public BookDto findById(@PathVariable Long id) {
         return bookService.findById(id);
     }
 

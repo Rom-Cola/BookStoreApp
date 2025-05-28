@@ -1,7 +1,6 @@
 package com.loievroman.bookstoreapp.service;
 
 import com.loievroman.bookstoreapp.dto.book.BookDto;
-import com.loievroman.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import com.loievroman.bookstoreapp.dto.book.CreateBookRequestDto;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -14,7 +13,7 @@ public interface BookService {
 
     List<BookDto> getBooksByCategoryId(Long categoryId);
 
-    BookDtoWithoutCategoryIds findById(Long id);
+    BookDto findById(Long id);
 
     BookDto update(Long id, CreateBookRequestDto requestDto);
 
