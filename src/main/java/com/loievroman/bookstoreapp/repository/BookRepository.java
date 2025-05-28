@@ -1,7 +1,6 @@
 package com.loievroman.bookstoreapp.repository;
 
 import com.loievroman.bookstoreapp.model.Book;
-import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -15,11 +14,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @EntityGraph(attributePaths = "categories")
     List<Book> findAllByCategoriesId(Long categoryId);
 
-    @Nonnull
     @EntityGraph(attributePaths = "categories")
-    List<Book> findAll();
-
-    @Nonnull
-    @EntityGraph(attributePaths = "categories")
-    Optional<Book> findById(@Nonnull Long id);
+    Optional<Book> findById(Long id);
 }
