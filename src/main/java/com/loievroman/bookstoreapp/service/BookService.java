@@ -1,17 +1,18 @@
 package com.loievroman.bookstoreapp.service;
 
 import com.loievroman.bookstoreapp.dto.book.BookDto;
+import com.loievroman.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import com.loievroman.bookstoreapp.dto.book.CreateBookRequestDto;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface BookService {
-    BookDto save(CreateBookRequestDto book);
+    BookDto createBook(CreateBookRequestDto book);
 
     Page<BookDto> findAll(Pageable pageable);
 
-    List<BookDto> getBooksByCategoryId(Long categoryId);
+    List<BookDtoWithoutCategoryIds> getBooksByCategoryId(Long categoryId);
 
     BookDto findById(Long id);
 

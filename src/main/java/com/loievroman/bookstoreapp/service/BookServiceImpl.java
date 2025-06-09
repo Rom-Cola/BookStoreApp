@@ -1,13 +1,18 @@
 package com.loievroman.bookstoreapp.service;
 
 import com.loievroman.bookstoreapp.dto.book.BookDto;
+import com.loievroman.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import com.loievroman.bookstoreapp.dto.book.CreateBookRequestDto;
 import com.loievroman.bookstoreapp.exception.EntityNotFoundException;
 import com.loievroman.bookstoreapp.mapper.BookMapper;
 import com.loievroman.bookstoreapp.model.Book;
+import com.loievroman.bookstoreapp.model.Category;
 import com.loievroman.bookstoreapp.repository.BookRepository;
+import com.loievroman.bookstoreapp.repository.CategoryRepository;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +23,17 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final CategoryRepository categoryRepository;
 
     @Override
-    public BookDto save(CreateBookRequestDto requestDto) {
+    public BookDto createBook(CreateBookRequestDto requestDto) {
         Book book = bookMapper.toEntity(requestDto);
+        if (requestDto.getCategoriesIds() != null && !requestDto.getCategoriesIds().isEmpty()) {
+            Set<Category> categories =
+                    new HashSet<>(categoryRepository.findAllById(requestDto.getCategoriesIds()));
+            book.setCategories(categories);
+        }
+
         return bookMapper.toDto(bookRepository.save(book));
     }
 
@@ -32,10 +44,10 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> getBooksByCategoryId(Long categoryId) {
+    public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(Long categoryId) {
         return bookRepository.findAllByCategoriesId(categoryId)
                 .stream()
-                .map(bookMapper::toDto)
+                .map(bookMapper::toDtoWithoutCategories)
                 .toList();
     }
 

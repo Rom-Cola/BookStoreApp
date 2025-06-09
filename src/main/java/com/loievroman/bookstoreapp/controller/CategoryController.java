@@ -1,6 +1,6 @@
 package com.loievroman.bookstoreapp.controller;
 
-import com.loievroman.bookstoreapp.dto.book.BookDto;
+import com.loievroman.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import com.loievroman.bookstoreapp.dto.category.CategoryDto;
 import com.loievroman.bookstoreapp.dto.category.CreateCategoryRequestDto;
 import com.loievroman.bookstoreapp.service.BookService;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/categories")
+@RequestMapping("/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -63,7 +63,7 @@ public class CategoryController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto createCategory(@RequestBody @Valid CreateCategoryRequestDto categoryDto) {
-        return categoryService.save(categoryDto);
+        return categoryService.createCategory(categoryDto);
     }
 
     @Operation(
@@ -115,7 +115,7 @@ public class CategoryController {
     @ApiResponse(responseCode = "404", description = "Category not found.")
     @GetMapping("/{id}/books")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public List<BookDto> getBooksByCategoryId(@PathVariable Long id) {
+    public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(@PathVariable Long id) {
         return bookService.getBooksByCategoryId(id);
     }
 }
