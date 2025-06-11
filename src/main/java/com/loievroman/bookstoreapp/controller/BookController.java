@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/books")
+@RequestMapping("/books")
 public class BookController {
 
     private final BookService bookService;
@@ -61,8 +61,8 @@ public class BookController {
     @ApiResponse(responseCode = "201", description = "Book created successfully.")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public BookDto save(@RequestBody @Valid CreateBookRequestDto requestDto) {
-        return bookService.save(requestDto);
+    public BookDto createBook(@RequestBody @Valid CreateBookRequestDto requestDto) {
+        return bookService.createBook(requestDto);
     }
 
     @Operation(

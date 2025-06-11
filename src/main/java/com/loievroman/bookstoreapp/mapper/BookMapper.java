@@ -2,8 +2,13 @@ package com.loievroman.bookstoreapp.mapper;
 
 import com.loievroman.bookstoreapp.config.MapperConfig;
 import com.loievroman.bookstoreapp.dto.book.BookDto;
+import com.loievroman.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import com.loievroman.bookstoreapp.dto.book.CreateBookRequestDto;
 import com.loievroman.bookstoreapp.model.Book;
+import com.loievroman.bookstoreapp.model.Category;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
@@ -11,8 +16,20 @@ import org.mapstruct.MappingTarget;
 public interface BookMapper {
     BookDto toDto(Book book);
 
-    Book toModel(CreateBookRequestDto requestDto);
+    Book toEntity(CreateBookRequestDto requestDto);
 
-    Book updateModel(CreateBookRequestDto requestDto, @MappingTarget Book book);
+    Book updateEntity(CreateBookRequestDto requestDto, @MappingTarget Book book);
 
+    BookDtoWithoutCategoryIds toDtoWithoutCategories(Book book);
+
+    @AfterMapping
+    default void setCategoryIds(@MappingTarget BookDto bookDto, Book book) {
+        if (book.getCategories() != null) {
+            Set<Long> categoryIds = book.getCategories().stream()
+                    .map(Category::getId)
+                    .collect(Collectors.toSet());
+            bookDto.setCategoriesIds(categoryIds);
+        }
+
+    }
 }
