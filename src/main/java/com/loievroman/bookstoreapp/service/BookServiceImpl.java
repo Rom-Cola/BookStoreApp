@@ -10,7 +10,6 @@ import com.loievroman.bookstoreapp.model.Category;
 import com.loievroman.bookstoreapp.repository.BookRepository;
 import com.loievroman.bookstoreapp.repository.CategoryRepository;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -44,11 +43,10 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(Long categoryId) {
-        return bookRepository.findAllByCategoriesId(categoryId)
-                .stream()
-                .map(bookMapper::toDtoWithoutCategories)
-                .toList();
+    public Page<BookDtoWithoutCategoryIds> getBooksByCategoryId(Pageable pageable,
+                                                                Long categoryId) {
+        return bookRepository.findAllByCategoriesId(pageable, categoryId)
+                .map(bookMapper::toDtoWithoutCategories);
     }
 
     @Override

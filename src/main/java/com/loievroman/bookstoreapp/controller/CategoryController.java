@@ -115,7 +115,8 @@ public class CategoryController {
     @ApiResponse(responseCode = "404", description = "Category not found.")
     @GetMapping("/{id}/books")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(@PathVariable Long id) {
-        return bookService.getBooksByCategoryId(id);
+    public Page<BookDtoWithoutCategoryIds> getBooksByCategoryId(Pageable pageable,
+                                                                @PathVariable Long id) {
+        return bookService.getBooksByCategoryId(pageable, id);
     }
 }

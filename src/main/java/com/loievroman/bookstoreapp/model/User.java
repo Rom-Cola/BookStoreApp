@@ -51,7 +51,7 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT")
+    @Column(nullable = false, columnDefinition = "TINYINT")
     private boolean isDeleted = false;
 
     @Override

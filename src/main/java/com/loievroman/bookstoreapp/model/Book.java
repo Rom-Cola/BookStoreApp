@@ -52,6 +52,6 @@ public class Book {
     )
     private Set<Category> categories = new HashSet<>();
 
-    @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT")
+    @Column(nullable = false, columnDefinition = "TINYINT")
     private boolean isDeleted = false;
 }
