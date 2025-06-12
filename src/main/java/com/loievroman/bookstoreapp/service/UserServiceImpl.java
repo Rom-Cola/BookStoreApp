@@ -6,10 +6,13 @@ import com.loievroman.bookstoreapp.exception.EntityNotFoundException;
 import com.loievroman.bookstoreapp.exception.RegistrationException;
 import com.loievroman.bookstoreapp.mapper.UserMapper;
 import com.loievroman.bookstoreapp.model.Role;
+import com.loievroman.bookstoreapp.model.ShoppingCart;
 import com.loievroman.bookstoreapp.model.User;
 import com.loievroman.bookstoreapp.repository.RoleRepository;
+import com.loievroman.bookstoreapp.repository.ShoppingCartRepository;
 import com.loievroman.bookstoreapp.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     private final RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private ShoppingCartRepository shoppingCartRepository;
 
     @Override
     @Transactional
@@ -45,6 +49,16 @@ public class UserServiceImpl implements UserService {
         user.setRoles(Set.of(userRole));
 
         userRepository.save(user);
+
+        createUserShoppingCart(user);
+
         return userMapper.toUserResponse(user);
+    }
+
+    private void createUserShoppingCart(User user) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        shoppingCart.setCartItems(new HashSet<>());
+        shoppingCartRepository.save(shoppingCart);
     }
 }
