@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -47,7 +49,8 @@ public class ShoppingCartController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Book added to cart successfully."),
-            @ApiResponse(responseCode = "400", description = "Invalid input.")
+            @ApiResponse(responseCode = "404", description = "Invalid input. "
+                    + "Shopping cart or Book not found")
     })
     @PostMapping
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -65,6 +68,7 @@ public class ShoppingCartController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Cart item updated successfully."),
+            @ApiResponse(responseCode = "403", description = "Cart item does not belong to the current user."),
             @ApiResponse(responseCode = "404", description = "Cart item not found.")
     })
     @PutMapping("/items/{id}")
@@ -84,9 +88,11 @@ public class ShoppingCartController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Cart item deleted successfully."),
-            @ApiResponse(responseCode = "404", description = "Cart item not found.")
+            @ApiResponse(responseCode = "404", description = "Cart item not found."),
+            @ApiResponse(responseCode = "403", description = "Cart item does not belong to the current user.")
     })
     @DeleteMapping("/items/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_USER')")
     public void deleteCartItem(
             Authentication authentication,
