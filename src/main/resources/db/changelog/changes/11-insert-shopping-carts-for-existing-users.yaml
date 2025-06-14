@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-shopping-carts-for-existing-users
+      author: loievroman
+      changes:
+        - sql:
+            comment: Create shopping_cart for each user without one
+            sql: |
+              INSERT INTO shopping_carts (id, is_deleted)
+              SELECT u.id, FALSE
+              FROM users u
+              LEFT JOIN shopping_carts sc ON u.id = sc.id
+              WHERE NOT EXISTS (SELECT 1 FROM shopping_carts sc2 WHERE sc2.id = u.id);
