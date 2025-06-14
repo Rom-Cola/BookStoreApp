@@ -4,20 +4,22 @@ import com.loievroman.bookstoreapp.dto.cartitem.AddCartItemRequestDto;
 import com.loievroman.bookstoreapp.dto.cartitem.UpdateCartItemRequestDto;
 import com.loievroman.bookstoreapp.dto.shoppingcart.ShoppingCartDto;
 import com.loievroman.bookstoreapp.exception.EntityNotFoundException;
-import com.loievroman.bookstoreapp.exception.SecurityException;
 import com.loievroman.bookstoreapp.mapper.ShoppingCartMapper;
 import com.loievroman.bookstoreapp.model.Book;
 import com.loievroman.bookstoreapp.model.CartItem;
 import com.loievroman.bookstoreapp.model.ShoppingCart;
+import com.loievroman.bookstoreapp.model.User;
 import com.loievroman.bookstoreapp.repository.BookRepository;
 import com.loievroman.bookstoreapp.repository.CartItemRepository;
 import com.loievroman.bookstoreapp.repository.ShoppingCartRepository;
 import jakarta.transaction.Transactional;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 
@@ -27,17 +29,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final BookRepository bookRepository;
 
     @Override
-    public ShoppingCartDto findById(Long id) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findById(id)
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Can't find shopping cart by id=" + id)
-                );
-        return shoppingCartMapper.toDto(shoppingCart);
-    }
-
-    @Override
     public ShoppingCartDto findByUserId(Long userId) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId)
+        ShoppingCart shoppingCart = shoppingCartRepository.findById(userId)
                 .orElseThrow(
                         () -> new EntityNotFoundException(
                                 "Can't find shopping cart by user id=" + userId)
@@ -46,10 +39,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    @Transactional
     public ShoppingCartDto addBookToShoppingCart(Long userId,
                                                  AddCartItemRequestDto addCartItemRequestDto) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId)
+        ShoppingCart shoppingCart = shoppingCartRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Shopping cart not found for user id: " + userId));
 
@@ -72,38 +64,39 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    @Transactional
     public ShoppingCartDto updateCartItemQuantity(
             Long userId, Long cartItemId,
             UpdateCartItemRequestDto updateCartItemRequestDto
     ) {
-        CartItem cartItem = cartItemRepository.findById(cartItemId)
+        CartItem cartItem = cartItemRepository.findByIdAndShoppingCartUserId(cartItemId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Cart item not found with id: " + cartItemId
+                        "Cart item not found for user with id: " + userId
+                                + " and cart item id: " + cartItemId
                 ));
-
-        if (!cartItem.getShoppingCart().getUser().getId().equals(userId)) {
-            throw new SecurityException("Cart item does not belong to the current user.");
-        }
         cartItem.setQuantity(updateCartItemRequestDto.getQuantity());
         cartItemRepository.save(cartItem);
         return shoppingCartMapper.toDto(cartItem.getShoppingCart());
     }
 
     @Override
-    @Transactional
     public void deleteCartItemById(Long userId, Long cartItemId) {
-        CartItem cartItem = cartItemRepository.findById(cartItemId)
+        CartItem cartItem = cartItemRepository.findByIdAndShoppingCartUserId(cartItemId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Cart item not found with id: " + cartItemId
+                        "Cart item not found for user with id: " + userId
+                                + " and cart item id: " + cartItemId
                 ));
-
-        if (!cartItem.getShoppingCart().getUser().getId().equals(userId)) {
-            throw new SecurityException("Cart item does not belong to the current user.");
-        }
 
         ShoppingCart shoppingCart = cartItem.getShoppingCart();
         shoppingCart.getCartItems().remove(cartItem);
         cartItemRepository.deleteById(cartItemId);
+    }
+
+    @Override
+    public void createUserShoppingCart(User user) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        shoppingCart.setId(user.getId());
+        shoppingCart.setCartItems(new HashSet<>());
+        shoppingCartRepository.save(shoppingCart);
     }
 }

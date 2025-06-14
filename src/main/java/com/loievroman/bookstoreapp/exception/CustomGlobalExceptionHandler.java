@@ -49,26 +49,6 @@ public class CustomGlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(SecurityException.class)
-    public ResponseEntity<String> handleSecurityExceptions(
-            SecurityException ex
-    ) {
-        return new ResponseEntity<>(
-                ex.getMessage(),
-                HttpStatus.FORBIDDEN
-        );
-    }
-
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<String> handleIllegalStateExceptions(
-            IllegalStateException ex
-    ) {
-        return new ResponseEntity<>(
-                ex.getMessage(),
-                HttpStatus.BAD_REQUEST
-        );
-    }
-
     private String getErrorMessage(ObjectError objectError) {
         if (objectError instanceof FieldError fieldError) {
             return fieldError.getField()

@@ -3,10 +3,9 @@ package com.loievroman.bookstoreapp.service;
 import com.loievroman.bookstoreapp.dto.cartitem.AddCartItemRequestDto;
 import com.loievroman.bookstoreapp.dto.cartitem.UpdateCartItemRequestDto;
 import com.loievroman.bookstoreapp.dto.shoppingcart.ShoppingCartDto;
+import com.loievroman.bookstoreapp.model.User;
 
 public interface ShoppingCartService {
-    ShoppingCartDto findById(Long id);
-
     ShoppingCartDto findByUserId(Long userId);
 
     ShoppingCartDto addBookToShoppingCart(Long userId, AddCartItemRequestDto addCartItemRequestDto);
@@ -18,4 +17,6 @@ public interface ShoppingCartService {
     );
 
     void deleteCartItemById(Long userId, Long cartItemId);
+
+    void createUserShoppingCart(User user);
 }

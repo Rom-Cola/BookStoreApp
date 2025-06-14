@@ -6,8 +6,8 @@ databaseChangeLog:
         - sql:
             comment: Create shopping_cart for each user without one
             sql: |
-              INSERT INTO shopping_carts (user_id, is_deleted)
+              INSERT INTO shopping_carts (id, is_deleted)
               SELECT u.id, FALSE
               FROM users u
-              LEFT JOIN shopping_carts sc ON u.id = sc.user_id
-              WHERE sc.user_id IS NULL;
+              LEFT JOIN shopping_carts sc ON u.id = sc.id
+              WHERE NOT EXISTS (SELECT 1 FROM shopping_carts sc2 WHERE sc2.id = u.id);

@@ -38,7 +38,7 @@ public class ShoppingCartController {
     @GetMapping
     @PreAuthorize("hasRole('ROLE_USER')")
     public ShoppingCartDto getUsersShoppingCart(Authentication authentication) {
-        User user = getUserByPrincipal(authentication.getPrincipal());
+        User user = (User) authentication.getPrincipal();
         return shoppingCartService.findByUserId(user.getId());
     }
 
@@ -57,7 +57,7 @@ public class ShoppingCartController {
     public ShoppingCartDto addBookToShoppingCart(
             Authentication authentication,
             @RequestBody @Valid AddCartItemRequestDto requestDto) {
-        User user = getUserByPrincipal(authentication.getPrincipal());
+        User user = (User) authentication.getPrincipal();
         return shoppingCartService.addBookToShoppingCart(user.getId(), requestDto);
     }
 
@@ -68,8 +68,6 @@ public class ShoppingCartController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Cart item updated successfully."),
-            @ApiResponse(responseCode = "403", description = "Cart item does not"
-                    + " belong to the current user."),
             @ApiResponse(responseCode = "404", description = "Cart item not found.")
     })
     @PutMapping("/items/{id}")
@@ -79,7 +77,7 @@ public class ShoppingCartController {
             @RequestBody UpdateCartItemRequestDto requestDto,
             @PathVariable Long id
     ) {
-        User user = getUserByPrincipal(authentication.getPrincipal());
+        User user = (User) authentication.getPrincipal();
         return shoppingCartService.updateCartItemQuantity(user.getId(), id, requestDto);
     }
 
@@ -90,8 +88,6 @@ public class ShoppingCartController {
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Cart item deleted successfully."),
             @ApiResponse(responseCode = "404", description = "Cart item not found."),
-            @ApiResponse(responseCode = "403", description = "Cart item does"
-                    + " not belong to the current user.")
     })
     @DeleteMapping("/items/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -100,14 +96,7 @@ public class ShoppingCartController {
             Authentication authentication,
             @PathVariable Long id
     ) {
-        User user = getUserByPrincipal(authentication.getPrincipal());
+        User user = (User) authentication.getPrincipal();
         shoppingCartService.deleteCartItemById(user.getId(), id);
-    }
-
-    private User getUserByPrincipal(Object principal) {
-        if (principal instanceof User user) {
-            return user;
-        }
-        throw new IllegalStateException("Principal is not of expected type User");
     }
 }
