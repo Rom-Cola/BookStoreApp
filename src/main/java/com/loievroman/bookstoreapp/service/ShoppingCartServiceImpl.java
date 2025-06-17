@@ -13,7 +13,6 @@ import com.loievroman.bookstoreapp.repository.BookRepository;
 import com.loievroman.bookstoreapp.repository.CartItemRepository;
 import com.loievroman.bookstoreapp.repository.ShoppingCartRepository;
 import jakarta.transaction.Transactional;
-import java.util.HashSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -96,7 +95,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         ShoppingCart shoppingCart = new ShoppingCart();
         shoppingCart.setUser(user);
         shoppingCart.setId(user.getId());
-        shoppingCart.setCartItems(new HashSet<>());
         shoppingCartRepository.save(shoppingCart);
     }
 }
