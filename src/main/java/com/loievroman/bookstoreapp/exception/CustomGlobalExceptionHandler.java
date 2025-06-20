@@ -49,6 +49,16 @@ public class CustomGlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(OrderCreateException.class)
+    public ResponseEntity<String> handleOrderCreateExceptions(
+            OrderCreateException ex
+    ) {
+        return new ResponseEntity<>(
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
     private String getErrorMessage(ObjectError objectError) {
         if (objectError instanceof FieldError fieldError) {
             return fieldError.getField()
