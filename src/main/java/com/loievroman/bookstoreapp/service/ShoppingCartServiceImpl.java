@@ -97,9 +97,4 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCart.setId(user.getId());
         shoppingCartRepository.save(shoppingCart);
     }
-
-    @Override
-    public void clearShoppingCart(User user) {
-
-    }
 }

@@ -20,7 +20,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: status
-                  type: ENUM('PENDING', 'COMPLETED', 'DELIVERED')
+                  type: VARCHAR(50)
                   constraints:
                     nullable: false
               - column:

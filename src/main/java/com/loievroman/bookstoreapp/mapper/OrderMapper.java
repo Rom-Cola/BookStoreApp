@@ -22,7 +22,6 @@ public interface OrderMapper {
     @Mappings({
             @Mapping(target = "deleted", ignore = true),
             @Mapping(target = "id", ignore = true),
-            @Mapping(target = "user", source = "user"),
             @Mapping(target = "shippingAddress", source = "createOrderRequestDto.shippingAddress"),
             @Mapping(target = "orderItems", source = "shoppingCart.cartItems"),
             @Mapping(

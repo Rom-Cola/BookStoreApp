@@ -5,7 +5,6 @@ import com.loievroman.bookstoreapp.dto.order.OrderDto;
 import com.loievroman.bookstoreapp.dto.order.UpdateOrderRequestStatusDto;
 import com.loievroman.bookstoreapp.dto.orderitem.OrderItemDto;
 import com.loievroman.bookstoreapp.model.User;
-import com.loievroman.bookstoreapp.service.OrderItemService;
 import com.loievroman.bookstoreapp.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,9 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/orders")
 public class OrderController {
-
     private final OrderService orderService;
-    private final OrderItemService orderItemService;
 
     @Operation(
             summary = "Place an order",
@@ -44,11 +41,11 @@ public class OrderController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Bad Request - Invalid request body or empty shopping cart."
+                    description = "Cannot create new order for user, shopping cart is empty"
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Shopping cart not found."
+                    description = "Can't find shopping cart by user id"
             )
     })
     @PostMapping
@@ -127,7 +124,7 @@ public class OrderController {
             Pageable pageable
     ) {
         User user = (User) authentication.getPrincipal();
-        return orderItemService.findOrderItems(user, orderId, pageable);
+        return orderService.findOrderItems(user, orderId, pageable);
     }
 
     @Operation(
@@ -152,7 +149,7 @@ public class OrderController {
             @PathVariable Long itemId
     ) {
         User user = (User) authentication.getPrincipal();
-        return orderItemService.findOrderItem(user, orderId, itemId);
+        return orderService.findOrderItem(user, orderId, itemId);
     }
 
     @DeleteMapping("/{id}")

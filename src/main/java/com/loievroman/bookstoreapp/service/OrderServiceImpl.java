@@ -3,13 +3,16 @@ package com.loievroman.bookstoreapp.service;
 import com.loievroman.bookstoreapp.dto.order.CreateOrderRequestDto;
 import com.loievroman.bookstoreapp.dto.order.OrderDto;
 import com.loievroman.bookstoreapp.dto.order.UpdateOrderRequestStatusDto;
+import com.loievroman.bookstoreapp.dto.orderitem.OrderItemDto;
 import com.loievroman.bookstoreapp.exception.EntityNotFoundException;
 import com.loievroman.bookstoreapp.exception.OrderCreateException;
+import com.loievroman.bookstoreapp.mapper.OrderItemMapper;
 import com.loievroman.bookstoreapp.mapper.OrderMapper;
 import com.loievroman.bookstoreapp.model.Order;
 import com.loievroman.bookstoreapp.model.OrderItem;
 import com.loievroman.bookstoreapp.model.ShoppingCart;
 import com.loievroman.bookstoreapp.model.User;
+import com.loievroman.bookstoreapp.repository.OrderItemRepository;
 import com.loievroman.bookstoreapp.repository.OrderRepository;
 import com.loievroman.bookstoreapp.repository.ShoppingCartRepository;
 import jakarta.transaction.Transactional;
@@ -27,6 +30,27 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final ShoppingCartRepository shoppingCartRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final OrderItemMapper orderItemMapper;
+
+    @Override
+    public Page<OrderItemDto> findOrderItems(User user, Long orderId, Pageable pageable) {
+        Page<OrderItem> orderItems =
+                orderItemRepository.findAllByOrderIdAndUserId(orderId, user.getId(), pageable);
+        return orderItems.map(orderItemMapper::toDto);
+    }
+
+    @Override
+    public OrderItemDto findOrderItem(User user, Long orderId, Long orderItemId) {
+        OrderItem orderItem =
+                orderItemRepository.findByOrderIdAndUserIdAndId(orderId, user.getId(), orderItemId)
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                "Order item not found for user with id: " + user.getId()
+                                        + " order id: " + orderId
+                                        + " and order item id: " + orderItemId)
+                        );
+        return orderItemMapper.toDto(orderItem);
+    }
 
     @Override
     @Transactional

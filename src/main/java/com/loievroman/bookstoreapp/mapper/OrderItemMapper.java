@@ -11,7 +11,6 @@ import org.mapstruct.Mapping;
 public interface OrderItemMapper {
 
     @Mapping(target = "price", source = "book.price")
-    @Mapping(target = "book", source = "book")
     OrderItem toEntity(CartItem cartItem);
 
     @Mapping(target = "bookId", source = "book.id")
