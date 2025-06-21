@@ -94,7 +94,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public void createUserShoppingCart(User user) {
         ShoppingCart shoppingCart = new ShoppingCart();
         shoppingCart.setUser(user);
-        shoppingCart.setId(user.getId());
         shoppingCartRepository.save(shoppingCart);
     }
 }
