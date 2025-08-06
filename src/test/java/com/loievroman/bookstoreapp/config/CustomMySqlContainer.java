@@ -1,14 +1,28 @@
 package com.loievroman.bookstoreapp.config;
 
+import java.time.Duration;
 import org.testcontainers.containers.MySQLContainer;
 
 public class CustomMySqlContainer extends MySQLContainer<CustomMySqlContainer> {
-    private static final String DB_IMAGE = "mysql:8";
+    private static final String DB_IMAGE = "mysql:8.0.33";
+    private static final String DATABASE_NAME = "testdb";
+    private static final String USERNAME = "test";
+    private static final String PASSWORD = "test";
 
     private static CustomMySqlContainer mysqlContainer;
 
     private CustomMySqlContainer() {
         super(DB_IMAGE);
+        this.withDatabaseName(DATABASE_NAME).withUsername(USERNAME).withPassword(PASSWORD)
+                .withReuse(true).withStartupTimeout(Duration.ofSeconds(120))
+                // Видаляємо проблемні команди і додаємо сумісні з MySQL 8
+                .withCommand("mysqld", "--character-set-server=utf8mb4",
+                        "--collation-server=utf8mb4_unicode_ci",
+                        "--default-authentication-plugin=mysql_native_password",
+                        "--innodb-flush-method=fsync", "--innodb-use-native-aio=0",
+                        "--log-bin-trust-function-creators=1")
+                // Додаємо змінні середовища
+                .withEnv("MYSQL_ROOT_HOST", "%").withEnv("MYSQL_ROOT_PASSWORD", PASSWORD);
     }
 
     public static synchronized CustomMySqlContainer getInstance() {
@@ -21,12 +35,13 @@ public class CustomMySqlContainer extends MySQLContainer<CustomMySqlContainer> {
     @Override
     public void start() {
         super.start();
-        System.setProperty("TEST_DB_URL", mysqlContainer.getJdbcUrl());
-        System.setProperty("TEST_DB_USERNAME", mysqlContainer.getUsername());
-        System.setProperty("TEST_DB_PASSWORD", mysqlContainer.getPassword());
+        System.setProperty("TEST_DB_URL", this.getJdbcUrl());
+        System.setProperty("TEST_DB_USERNAME", this.getUsername());
+        System.setProperty("TEST_DB_PASSWORD", this.getPassword());
     }
 
     @Override
     public void stop() {
+        // Не зупиняємо для reuse
     }
 }
