@@ -1,6 +1,7 @@
 package com.loievroman.bookstoreapp.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.times;
@@ -19,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -78,6 +80,7 @@ class BookServiceImplTest {
     }
 
     @Test
+    @DisplayName("Find book by existing ID - should return book DTO")
     void findById_WithExistingId_ReturnsBookDto() {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
         when(bookMapper.toDto(book)).thenReturn(bookDto);
@@ -88,6 +91,7 @@ class BookServiceImplTest {
     }
 
     @Test
+    @DisplayName("Find book by non-existing ID - should throw exception")
     void findById_WithNonExistingId_ThrowsEntityNotFoundException() {
         when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -95,6 +99,7 @@ class BookServiceImplTest {
     }
 
     @Test
+    @DisplayName("Find all books paginated - should return a page of book DTOs")
     void findAll_ReturnsPageOfBookDto() {
         Pageable pageable = PageRequest.of(0, 10);
         List<Book> books = new ArrayList<>();
@@ -111,6 +116,7 @@ class BookServiceImplTest {
     }
 
     @Test
+    @DisplayName("Create a new book - should create and return book DTO")
     void createBook_CreatesAndReturnsBookDto() {
         Book bookToSave = new Book();
         bookToSave.setTitle("Test Book");
@@ -131,6 +137,32 @@ class BookServiceImplTest {
     }
 
     @Test
+    @DisplayName("Update book with existing ID - should update and return DTO")
+    void update_WithExistingId_UpdatesAndReturnsBookDto() {
+
+        Long bookId = 1L;
+        Book existingBook = new Book();
+        existingBook.setId(bookId);
+
+        Book updatedBook = new Book();
+        updatedBook.setId(bookId);
+        updatedBook.setTitle(createBookRequestDto.getTitle());
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(existingBook));
+        when(bookMapper.updateEntity(createBookRequestDto, existingBook)).thenReturn(updatedBook);
+        when(bookRepository.save(updatedBook)).thenReturn(updatedBook);
+        when(bookMapper.toDto(updatedBook)).thenReturn(bookDto);
+
+        BookDto result = bookService.update(bookId, createBookRequestDto);
+
+        assertNotNull(result);
+        assertEquals(bookDto, result);
+        verify(bookRepository, times(1)).findById(bookId);
+        verify(bookRepository, times(1)).save(updatedBook);
+    }
+
+    @Test
+    @DisplayName("Update book with non-existing ID - should throw exception")
     void update_WithNonExistingId_ThrowsEntityNotFoundException() {
         when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -139,6 +171,7 @@ class BookServiceImplTest {
     }
 
     @Test
+    @DisplayName("Delete book by ID - should call delete method")
     void delete_DeletesBookById() {
         bookService.delete(1L);
         verify(bookRepository, times(1)).deleteById(1L);
