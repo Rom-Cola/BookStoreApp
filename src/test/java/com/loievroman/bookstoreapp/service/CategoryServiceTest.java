@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyLong;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -31,7 +30,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
-class CategoryServiceImplTest {
+class CategoryServiceTest {
 
     @Mock
     private CategoryRepository categoryRepository;
@@ -162,9 +161,9 @@ class CategoryServiceImplTest {
 
         assertNotNull(actualResponseDto);
         assertEquals(expectedResponseDto, actualResponseDto);
-        verify(categoryRepository, times(1)).findById(categoryId);
-        verify(categoryRepository, times(1)).save(any(Category.class));
-        verify(categoryMapper, times(1)).toDto(updatedCategory);
+        verify(categoryRepository).findById(categoryId);
+        verify(categoryRepository).save(any(Category.class));
+        verify(categoryMapper).toDto(updatedCategory);
     }
 
     @Test
@@ -179,6 +178,6 @@ class CategoryServiceImplTest {
     @DisplayName("Delete category by ID - should call delete method")
     void deleteById_DeletesCategoryById() {
         categoryService.deleteById(1L);
-        verify(categoryRepository, times(1)).deleteById(1L);
+        verify(categoryRepository).deleteById(1L);
     }
 }

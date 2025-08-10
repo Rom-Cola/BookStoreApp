@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.anyLong;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +31,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
-class BookServiceImplTest {
+class BookServiceTest {
 
     @Mock
     private BookRepository bookRepository;
@@ -157,8 +156,8 @@ class BookServiceImplTest {
 
         assertNotNull(result);
         assertEquals(bookDto, result);
-        verify(bookRepository, times(1)).findById(bookId);
-        verify(bookRepository, times(1)).save(updatedBook);
+        verify(bookRepository).findById(bookId);
+        verify(bookRepository).save(updatedBook);
     }
 
     @Test
@@ -174,6 +173,6 @@ class BookServiceImplTest {
     @DisplayName("Delete book by ID - should call delete method")
     void delete_DeletesBookById() {
         bookService.delete(1L);
-        verify(bookRepository, times(1)).deleteById(1L);
+        verify(bookRepository).deleteById(1L);
     }
 }

@@ -15,13 +15,12 @@ public class CustomMySqlContainer extends MySQLContainer<CustomMySqlContainer> {
         super(DB_IMAGE);
         this.withDatabaseName(DATABASE_NAME).withUsername(USERNAME).withPassword(PASSWORD)
                 .withReuse(true).withStartupTimeout(Duration.ofSeconds(120))
-                // Видаляємо проблемні команди і додаємо сумісні з MySQL 8
                 .withCommand("mysqld", "--character-set-server=utf8mb4",
                         "--collation-server=utf8mb4_unicode_ci",
                         "--default-authentication-plugin=mysql_native_password",
                         "--innodb-flush-method=fsync", "--innodb-use-native-aio=0",
                         "--log-bin-trust-function-creators=1")
-                // Додаємо змінні середовища
+
                 .withEnv("MYSQL_ROOT_HOST", "%").withEnv("MYSQL_ROOT_PASSWORD", PASSWORD);
     }
 
@@ -42,6 +41,6 @@ public class CustomMySqlContainer extends MySQLContainer<CustomMySqlContainer> {
 
     @Override
     public void stop() {
-        // Не зупиняємо для reuse
+
     }
 }
