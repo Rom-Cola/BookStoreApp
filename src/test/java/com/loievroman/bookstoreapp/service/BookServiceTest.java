@@ -1,0 +1,178 @@
+package com.loievroman.bookstoreapp.service;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.loievroman.bookstoreapp.dto.book.BookDto;
+import com.loievroman.bookstoreapp.dto.book.CreateBookRequestDto;
+import com.loievroman.bookstoreapp.exception.EntityNotFoundException;
+import com.loievroman.bookstoreapp.mapper.BookMapper;
+import com.loievroman.bookstoreapp.model.Book;
+import com.loievroman.bookstoreapp.repository.BookRepository;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+@ExtendWith(MockitoExtension.class)
+class BookServiceTest {
+
+    @Mock
+    private BookRepository bookRepository;
+
+    @Mock
+    private BookMapper bookMapper;
+
+    @InjectMocks
+    private BookServiceImpl bookService;
+
+    private Book book;
+    private BookDto bookDto;
+    private CreateBookRequestDto createBookRequestDto;
+
+    @BeforeEach
+    void setUp() {
+        book = new Book();
+        book.setId(1L);
+        book.setTitle("Test Book");
+        book.setAuthor("Test Author");
+        book.setIsbn("1234567890");
+        book.setPrice(BigDecimal.valueOf(20.00));
+        book.setDescription("Test Description");
+        book.setCoverImage("test.jpg");
+        book.setCategories(new HashSet<>());
+
+        bookDto = new BookDto();
+        bookDto.setId(1L);
+        bookDto.setTitle("Test Book");
+        bookDto.setAuthor("Test Author");
+        bookDto.setIsbn("1234567890");
+        bookDto.setPrice(BigDecimal.valueOf(20.00));
+        bookDto.setDescription("Test Description");
+        bookDto.setCoverImage("test.jpg");
+        bookDto.setCategoriesIds(new HashSet<>());
+
+        createBookRequestDto = new CreateBookRequestDto();
+        createBookRequestDto.setTitle("Test Book");
+        createBookRequestDto.setAuthor("Test Author");
+        createBookRequestDto.setIsbn("1234567890");
+        createBookRequestDto.setPrice(BigDecimal.valueOf(20.00));
+        createBookRequestDto.setDescription("Test Description");
+        createBookRequestDto.setCoverImage("test.jpg");
+        createBookRequestDto.setCategoriesIds(new HashSet<>());
+    }
+
+    @Test
+    @DisplayName("Find book by existing ID - should return book DTO")
+    void findById_WithExistingId_ReturnsBookDto() {
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+        when(bookMapper.toDto(book)).thenReturn(bookDto);
+
+        BookDto result = bookService.findById(1L);
+
+        assertEquals(bookDto, result);
+    }
+
+    @Test
+    @DisplayName("Find book by non-existing ID - should throw exception")
+    void findById_WithNonExistingId_ThrowsEntityNotFoundException() {
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> bookService.findById(1L));
+    }
+
+    @Test
+    @DisplayName("Find all books paginated - should return a page of book DTOs")
+    void findAll_ReturnsPageOfBookDto() {
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Book> books = new ArrayList<>();
+        books.add(book);
+        Page<Book> bookPage = new PageImpl<>(books, pageable, 1);
+
+        when(bookRepository.findAll(pageable)).thenReturn(bookPage);
+        when(bookMapper.toDto(book)).thenReturn(bookDto);
+
+        Page<BookDto> result = bookService.findAll(pageable);
+
+        assertEquals(1, result.getContent().size());
+        assertEquals(bookDto, result.getContent().get(0));
+    }
+
+    @Test
+    @DisplayName("Create a new book - should create and return book DTO")
+    void createBook_CreatesAndReturnsBookDto() {
+        Book bookToSave = new Book();
+        bookToSave.setTitle("Test Book");
+        bookToSave.setAuthor("Test Author");
+        bookToSave.setIsbn("1234567890");
+        bookToSave.setPrice(BigDecimal.valueOf(20.00));
+        bookToSave.setDescription("Test Description");
+        bookToSave.setCoverImage("test.jpg");
+        bookToSave.setCategories(new HashSet<>());
+
+        when(bookMapper.toEntity(createBookRequestDto)).thenReturn(bookToSave);
+        when(bookRepository.save(bookToSave)).thenReturn(book);
+        when(bookMapper.toDto(book)).thenReturn(bookDto);
+
+        BookDto result = bookService.createBook(createBookRequestDto);
+
+        assertEquals(bookDto, result);
+    }
+
+    @Test
+    @DisplayName("Update book with existing ID - should update and return DTO")
+    void update_WithExistingId_UpdatesAndReturnsBookDto() {
+
+        Long bookId = 1L;
+        Book existingBook = new Book();
+        existingBook.setId(bookId);
+
+        Book updatedBook = new Book();
+        updatedBook.setId(bookId);
+        updatedBook.setTitle(createBookRequestDto.getTitle());
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(existingBook));
+        when(bookMapper.updateEntity(createBookRequestDto, existingBook)).thenReturn(updatedBook);
+        when(bookRepository.save(updatedBook)).thenReturn(updatedBook);
+        when(bookMapper.toDto(updatedBook)).thenReturn(bookDto);
+
+        BookDto result = bookService.update(bookId, createBookRequestDto);
+
+        assertNotNull(result);
+        assertEquals(bookDto, result);
+        verify(bookRepository).findById(bookId);
+        verify(bookRepository).save(updatedBook);
+    }
+
+    @Test
+    @DisplayName("Update book with non-existing ID - should throw exception")
+    void update_WithNonExistingId_ThrowsEntityNotFoundException() {
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> bookService.update(1L, createBookRequestDto));
+    }
+
+    @Test
+    @DisplayName("Delete book by ID - should call delete method")
+    void delete_DeletesBookById() {
+        bookService.delete(1L);
+        verify(bookRepository).deleteById(1L);
+    }
+}

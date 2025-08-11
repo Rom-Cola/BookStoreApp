@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
+    private final RoleRepository roleRepository;
     private UserRepository userRepository;
     private UserMapper userMapper;
-    private final RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private ShoppingCartService shoppingCartService;
 
